@@ -31,6 +31,8 @@ import org.keycloak.common.util.ServerCookie;
 import javax.ws.rs.core.Cookie;
 import javax.ws.rs.core.HttpHeaders;
 
+import static org.keycloak.common.util.ServerCookie.SAME_SITE;
+
 
 /**
  * @author <a href="mailto:bill@burkecentral.com">Bill Burke</a>
@@ -38,11 +40,9 @@ import javax.ws.rs.core.HttpHeaders;
  */
 public class CookieHelper {
 
-    private static final Logger logger = Logger.getLogger(CookieHelper.class);
+    public static final String LEGACY_COOKIE = "_LEGACY";
 
-    public enum SAMESITE {
-        NONE // we currently support only SameSite=None; this might change in the future
-    }
+    private static final Logger logger = Logger.getLogger(CookieHelper.class);
 
     /**
      * Set a response cookie.  This solely exists because JAX-RS 1.1 does not support setting HttpOnly cookies
@@ -54,14 +54,23 @@ public class CookieHelper {
      * @param maxAge
      * @param secure
      * @param httpOnly
-     * @param samesite
+     * @param sameSite
      */
-    public static void addCookie(String name, String value, String path, String domain, String comment, int maxAge, boolean secure, boolean httpOnly, SAMESITE samesite) {
+    public static void addCookie(String name, String value, String path, String domain, String comment, int maxAge, boolean secure, boolean httpOnly, SAME_SITE sameSite) {
+        if (sameSite == SAME_SITE.NONE && !secure) {
+            throw new IllegalArgumentException("The cookie need to have Secure attribute when using SameSite=None");
+        }
+
         HttpResponse response = Resteasy.getContextData(HttpResponse.class);
         StringBuffer cookieBuf = new StringBuffer();
-        ServerCookie.appendCookieValue(cookieBuf, 1, name, value, path, domain, comment, maxAge, secure, httpOnly);
+        ServerCookie.appendCookieValue(cookieBuf, 1, name, value, path, domain, comment, maxAge, secure, httpOnly, sameSite);
         String cookie = cookieBuf.toString();
         response.getOutputHeaders().add(HttpHeaders.SET_COOKIE, cookie);
+
+        // a workaround for browser in older Apple OSs – browsers ignore cookies with SameSite=None
+        if (sameSite == SAME_SITE.NONE) {
+            addCookie(name + LEGACY_COOKIE, value, path, domain, comment, maxAge, secure, httpOnly, null);
+        }
     }
 
 
