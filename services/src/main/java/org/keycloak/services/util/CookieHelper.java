@@ -17,22 +17,19 @@
 
 package org.keycloak.services.util;
 
+import org.jboss.logging.Logger;
+import org.jboss.resteasy.spi.HttpResponse;
+import org.keycloak.common.util.Resteasy;
+import org.keycloak.common.util.ServerCookie;
+
+import javax.ws.rs.core.Cookie;
+import javax.ws.rs.core.HttpHeaders;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
-
-import org.jboss.logging.Logger;
-import org.jboss.resteasy.spi.HttpRequest;
-import org.jboss.resteasy.spi.HttpResponse;
-import org.keycloak.common.util.Resteasy;
-import org.keycloak.common.util.ServerCookie;
-import org.keycloak.services.managers.AuthenticationManager;
-
-import javax.ws.rs.core.Cookie;
-import javax.ws.rs.core.HttpHeaders;
 
 import static org.keycloak.common.util.ServerCookie.SAME_SITE;
 
@@ -111,14 +108,13 @@ public class CookieHelper {
     }
 
     public static Cookie getCookie(Map<String, Cookie> cookies, String name) {
-        Cookie cookie = cookies.get(AuthenticationManager.KEYCLOAK_SESSION_COOKIE);
+        Cookie cookie = cookies.get(name);
         if (cookie != null) {
             return cookie;
         }
         else {
-            String legacy = AuthenticationManager.KEYCLOAK_SESSION_COOKIE + LEGACY_COOKIE;
-            logger.debugv("Couldn't find cookie {0}, trying {0}",
-                    AuthenticationManager.KEYCLOAK_SESSION_COOKIE, legacy);
+            String legacy = name + LEGACY_COOKIE;
+            logger.debugv("Couldn't find cookie {0}, trying {0}", name, legacy);
             return cookies.get(legacy);
         }
     }
