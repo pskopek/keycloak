@@ -57,6 +57,13 @@ public class CookieHelper {
      * @param sameSite
      */
     public static void addCookie(String name, String value, String path, String domain, String comment, int maxAge, boolean secure, boolean httpOnly, SAME_SITE sameSite) {
+        SAME_SITE sameSiteParam = sameSite;
+        // when expiring a cookie we shouldn't set the sameSite attribute; if we set e.g. SameSite=None when expiring a cookie, the new cookie (with maxAge == 0)
+        // might be rejected by the browser in some cases resulting in leaving the original cookie untouched; that can even prevent user from accessing their application
+        if (maxAge == 0) {
+            sameSite = null;
+        }
+
         boolean secure_sameSite = sameSite == SAME_SITE.NONE || secure; // when SameSite=None, Secure attribute must be set
 
         HttpResponse response = Resteasy.getContextData(HttpResponse.class);
@@ -66,7 +73,7 @@ public class CookieHelper {
         response.getOutputHeaders().add(HttpHeaders.SET_COOKIE, cookie);
 
         // a workaround for browser in older Apple OSs – browsers ignore cookies with SameSite=None
-        if (sameSite == SAME_SITE.NONE) {
+        if (sameSiteParam == SAME_SITE.NONE) {
             addCookie(name + LEGACY_COOKIE, value, path, domain, comment, maxAge, secure, httpOnly, null);
         }
     }
