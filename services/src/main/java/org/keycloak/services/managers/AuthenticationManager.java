@@ -661,19 +661,19 @@ public class AuthenticationManager {
     public static void expireIdentityCookie(RealmModel realm, UriInfo uriInfo, ClientConnection connection) {
         logger.debug("Expiring identity cookie");
         String path = getIdentityCookiePath(realm, uriInfo);
-        expireCookie(realm, KEYCLOAK_IDENTITY_COOKIE, path, true, connection);
-        expireCookie(realm, KEYCLOAK_SESSION_COOKIE, path, false, connection);
+        expireCookie(realm, KEYCLOAK_IDENTITY_COOKIE, path, true, connection, null);
+        expireCookie(realm, KEYCLOAK_SESSION_COOKIE, path, false, connection, SAME_SITE.NONE);
 
         String oldPath = getOldCookiePath(realm, uriInfo);
-        expireCookie(realm, KEYCLOAK_IDENTITY_COOKIE, oldPath, true, connection);
-        expireCookie(realm, KEYCLOAK_SESSION_COOKIE, oldPath, false, connection);
+        expireCookie(realm, KEYCLOAK_IDENTITY_COOKIE, oldPath, true, connection, null);
+        expireCookie(realm, KEYCLOAK_SESSION_COOKIE, oldPath, false, connection, SAME_SITE.NONE);
     }
     public static void expireOldIdentityCookie(RealmModel realm, UriInfo uriInfo, ClientConnection connection) {
         logger.debug("Expiring old identity cookie with wrong path");
 
         String oldPath = getOldCookiePath(realm, uriInfo);
-        expireCookie(realm, KEYCLOAK_IDENTITY_COOKIE, oldPath, true, connection);
-        expireCookie(realm, KEYCLOAK_SESSION_COOKIE, oldPath, false, connection);
+        expireCookie(realm, KEYCLOAK_IDENTITY_COOKIE, oldPath, true, connection, null);
+        expireCookie(realm, KEYCLOAK_SESSION_COOKIE, oldPath, false, connection, SAME_SITE.NONE);
     }
 
 
@@ -681,14 +681,14 @@ public class AuthenticationManager {
         logger.debug("Expiring remember me cookie");
         String path = getIdentityCookiePath(realm, uriInfo);
         String cookieName = KEYCLOAK_REMEMBER_ME;
-        expireCookie(realm, cookieName, path, true, connection);
+        expireCookie(realm, cookieName, path, true, connection, null);
     }
 
     public static void expireOldAuthSessionCookie(RealmModel realm, UriInfo uriInfo, ClientConnection connection) {
         logger.debugv("Expire {1} cookie .", AuthenticationSessionManager.AUTH_SESSION_ID);
 
         String oldPath = getOldCookiePath(realm, uriInfo);
-        expireCookie(realm, AuthenticationSessionManager.AUTH_SESSION_ID, oldPath, true, connection);
+        expireCookie(realm, AuthenticationSessionManager.AUTH_SESSION_ID, oldPath, true, connection, null);
     }
 
     protected static String getIdentityCookiePath(RealmModel realm, UriInfo uriInfo) {
@@ -711,10 +711,10 @@ public class AuthenticationManager {
         return uri.getRawPath();
     }
 
-    public static void expireCookie(RealmModel realm, String cookieName, String path, boolean httpOnly, ClientConnection connection) {
+    public static void expireCookie(RealmModel realm, String cookieName, String path, boolean httpOnly, ClientConnection connection, SAME_SITE sameSite) {
         logger.debugf("Expiring cookie: %s path: %s", cookieName, path);
         boolean secureOnly = realm.getSslRequired().isRequired(connection);;
-        CookieHelper.addCookie(cookieName, "", path, null, "Expiring cookie", 0, secureOnly, httpOnly, null);
+        CookieHelper.addCookie(cookieName, "", path, null, "Expiring cookie", 0, secureOnly, httpOnly, sameSite);
     }
 
     public AuthResult authenticateIdentityCookie(KeycloakSession session, RealmModel realm) {
