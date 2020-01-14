@@ -40,10 +40,13 @@ public class CookieHelper {
 
     private static final Logger logger = Logger.getLogger(CookieHelper.class);
 
+    public enum SAMESITE {
+        NONE // we currently support only SameSite=None; this might change in the future
+    }
+
     /**
      * Set a response cookie.  This solely exists because JAX-RS 1.1 does not support setting HttpOnly cookies
-     *
-     * @param name
+     *  @param name
      * @param value
      * @param path
      * @param domain
@@ -51,8 +54,9 @@ public class CookieHelper {
      * @param maxAge
      * @param secure
      * @param httpOnly
+     * @param samesite
      */
-    public static void addCookie(String name, String value, String path, String domain, String comment, int maxAge, boolean secure, boolean httpOnly) {
+    public static void addCookie(String name, String value, String path, String domain, String comment, int maxAge, boolean secure, boolean httpOnly, SAMESITE samesite) {
         HttpResponse response = Resteasy.getContextData(HttpResponse.class);
         StringBuffer cookieBuf = new StringBuffer();
         ServerCookie.appendCookieValue(cookieBuf, 1, name, value, path, domain, comment, maxAge, secure, httpOnly);
