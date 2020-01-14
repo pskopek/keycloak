@@ -20,13 +20,16 @@ package org.keycloak.services.util;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.jboss.logging.Logger;
+import org.jboss.resteasy.spi.HttpRequest;
 import org.jboss.resteasy.spi.HttpResponse;
 import org.keycloak.common.util.Resteasy;
 import org.keycloak.common.util.ServerCookie;
+import org.keycloak.services.managers.AuthenticationManager;
 
 import javax.ws.rs.core.Cookie;
 import javax.ws.rs.core.HttpHeaders;
@@ -105,5 +108,18 @@ public class CookieHelper {
                 part.substring(part.indexOf('=') + 1)).collect(Collectors.toSet());
 
         return cookies;
+    }
+
+    public static Cookie getCookie(Map<String, Cookie> cookies, String name) {
+        Cookie cookie = cookies.get(AuthenticationManager.KEYCLOAK_SESSION_COOKIE);
+        if (cookie != null) {
+            return cookie;
+        }
+        else {
+            String legacy = AuthenticationManager.KEYCLOAK_SESSION_COOKIE + LEGACY_COOKIE;
+            logger.debugv("Couldn't find cookie {0}, trying {0}",
+                    AuthenticationManager.KEYCLOAK_SESSION_COOKIE, legacy);
+            return cookies.get(legacy);
+        }
     }
 }
