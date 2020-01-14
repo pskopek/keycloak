@@ -233,6 +233,13 @@ public class ServerCookie implements Serializable {
             buf.append(path);
         }
 
+        // SameSite
+        if (sameSite != null) {
+            String sameSiteStr = sameSite.name().substring(0,1).toUpperCase() + sameSite.name().substring(1).toLowerCase();
+            buf.append("; SameSite=");
+            buf.append(sameSiteStr);
+        }
+
         // Secure
         if (isSecure) {
             buf.append("; Secure");
@@ -241,13 +248,6 @@ public class ServerCookie implements Serializable {
         // HttpOnly
         if (httpOnly) {
             buf.append("; HttpOnly");
-        }
-
-        // SameSite
-        if (sameSite != null) {
-            String sameSiteStr = sameSite.name().substring(0,1).toUpperCase() + sameSite.name().substring(1).toLowerCase();
-            buf.append("; SameSite=");
-            buf.append(sameSiteStr);
         }
 
         headerBuf.append(buf);
