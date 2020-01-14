@@ -31,7 +31,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static org.keycloak.common.util.ServerCookie.SAME_SITE;
+import static org.keycloak.common.util.ServerCookie.SameSiteAttributeValue;
 
 
 /**
@@ -56,15 +56,15 @@ public class CookieHelper {
      * @param httpOnly
      * @param sameSite
      */
-    public static void addCookie(String name, String value, String path, String domain, String comment, int maxAge, boolean secure, boolean httpOnly, SAME_SITE sameSite) {
-        SAME_SITE sameSiteParam = sameSite;
+    public static void addCookie(String name, String value, String path, String domain, String comment, int maxAge, boolean secure, boolean httpOnly, SameSiteAttributeValue sameSite) {
+        SameSiteAttributeValue sameSiteParam = sameSite;
         // when expiring a cookie we shouldn't set the sameSite attribute; if we set e.g. SameSite=None when expiring a cookie, the new cookie (with maxAge == 0)
         // might be rejected by the browser in some cases resulting in leaving the original cookie untouched; that can even prevent user from accessing their application
         if (maxAge == 0) {
             sameSite = null;
         }
 
-        boolean secure_sameSite = sameSite == SAME_SITE.NONE || secure; // when SameSite=None, Secure attribute must be set
+        boolean secure_sameSite = sameSite == SameSiteAttributeValue.NONE || secure; // when SameSite=None, Secure attribute must be set
 
         HttpResponse response = Resteasy.getContextData(HttpResponse.class);
         StringBuffer cookieBuf = new StringBuffer();
@@ -73,9 +73,24 @@ public class CookieHelper {
         response.getOutputHeaders().add(HttpHeaders.SET_COOKIE, cookie);
 
         // a workaround for browser in older Apple OSs – browsers ignore cookies with SameSite=None
-        if (sameSiteParam == SAME_SITE.NONE) {
+        if (sameSiteParam == SameSiteAttributeValue.NONE) {
             addCookie(name + LEGACY_COOKIE, value, path, domain, comment, maxAge, secure, httpOnly, null);
         }
+    }
+
+    /**
+     * Set a response cookie avoiding SameSite parameter
+     *  @param name
+     * @param value
+     * @param path
+     * @param domain
+     * @param comment
+     * @param maxAge
+     * @param secure
+     * @param httpOnly
+     */
+    public static void addCookie(String name, String value, String path, String domain, String comment, int maxAge, boolean secure, boolean httpOnly) {
+        addCookie(name, value, path, domain, comment, maxAge, secure, httpOnly, null);
     }
 
 

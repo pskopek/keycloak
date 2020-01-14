@@ -148,7 +148,7 @@ public class DefaultLocaleSelectorProvider implements LocaleSelectorProvider {
 
     protected void updateLocaleCookie(RealmModel realm, String locale, UriInfo uriInfo) {
         boolean secure = realm.getSslRequired().isRequired(uriInfo.getRequestUri().getHost());
-        CookieHelper.addCookie(LOCALE_COOKIE, locale, AuthenticationManager.getRealmCookiePath(realm, uriInfo), null, null, -1, secure, true, null);
+        CookieHelper.addCookie(LOCALE_COOKIE, locale, AuthenticationManager.getRealmCookiePath(realm, uriInfo), null, null, -1, secure, true);
     }
 
     protected LocaleSelection findLocale(RealmModel realm, String... localeStrings) {

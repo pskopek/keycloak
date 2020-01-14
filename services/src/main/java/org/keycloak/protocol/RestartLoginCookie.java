@@ -124,13 +124,13 @@ public class RestartLoginCookie implements Token {
         String encoded = session.tokens().encode(restart);
         String path = AuthenticationManager.getRealmCookiePath(realm, uriInfo);
         boolean secureOnly = realm.getSslRequired().isRequired(connection);
-        CookieHelper.addCookie(KC_RESTART, encoded, path, null, null, -1, secureOnly, true, null);
+        CookieHelper.addCookie(KC_RESTART, encoded, path, null, null, -1, secureOnly, true);
     }
 
     public static void expireRestartCookie(RealmModel realm, ClientConnection connection, UriInfo uriInfo) {
         String path = AuthenticationManager.getRealmCookiePath(realm, uriInfo);
         boolean secureOnly = realm.getSslRequired().isRequired(connection);
-        CookieHelper.addCookie(KC_RESTART, "", path, null, null, 0, secureOnly, true, null);
+        CookieHelper.addCookie(KC_RESTART, "", path, null, null, 0, secureOnly, true);
     }
 
 

@@ -146,7 +146,7 @@ public class AuthenticationSessionManager {
         StickySessionEncoderProvider encoder = session.getProvider(StickySessionEncoderProvider.class);
         String encodedAuthSessionId = encoder.encodeSessionId(authSessionId);
 
-        CookieHelper.addCookie(AUTH_SESSION_ID, encodedAuthSessionId, cookiePath, null, null, -1, sslRequired, true, null);
+        CookieHelper.addCookie(AUTH_SESSION_ID, encodedAuthSessionId, cookiePath, null, null, -1, sslRequired, true);
 
         log.debugf("Set AUTH_SESSION_ID cookie with value %s", encodedAuthSessionId);
     }

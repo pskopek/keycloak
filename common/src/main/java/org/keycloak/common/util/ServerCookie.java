@@ -32,7 +32,7 @@ public class ServerCookie implements Serializable {
     private static final String tspecials = ",; ";
     private static final String tspecials2 = "()<>@,;:\\\"/[]?={} \t";
 
-    public enum SAME_SITE {
+    public enum SameSiteAttributeValue {
         NONE // we currently support only SameSite=None; this might change in the future
     }
 
@@ -178,7 +178,7 @@ public class ServerCookie implements Serializable {
                                          int maxAge,
                                          boolean isSecure,
                                          boolean httpOnly,
-                                         SAME_SITE sameSite) {
+                                         SameSiteAttributeValue sameSite) {
         StringBuffer buf = new StringBuffer();
         // Servlet implementation checks name
         buf.append(name);
