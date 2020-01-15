@@ -46,7 +46,7 @@ public class CookieHelper {
 
     /**
      * Set a response cookie.  This solely exists because JAX-RS 1.1 does not support setting HttpOnly cookies
-     *  @param name
+     * @param name
      * @param value
      * @param path
      * @param domain
@@ -80,7 +80,7 @@ public class CookieHelper {
 
     /**
      * Set a response cookie avoiding SameSite parameter
-     *  @param name
+     * @param name
      * @param value
      * @param path
      * @param domain
