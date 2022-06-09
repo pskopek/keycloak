@@ -20,6 +20,7 @@ package org.keycloak.common;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
+import java.util.regex.Matcher;
 
 /**
  * @author <a href="mailto:bill@burkecentral.com">Bill Burke</a>
@@ -27,8 +28,10 @@ import java.util.Properties;
  */
 public class Version {
     public static final String UNKNOWN = "UNKNOWN";
-    public static final String NAME = "Keycloak";
-    public static final String NAME_HTML = "<div class=\"kc-logo-text\"><span>Keycloak</span></div>";
+    public static final String NAME = "Red Hat build of Keycloak";
+    public static final String NAME_HTML =
+            "<div class=\"kc-logo-text\"><span>${name}</span></div>"
+                    .replace("${name}", Version.NAME);
     public static String VERSION;
     public static String RESOURCES_VERSION;
     public static String BUILD_TIME;
