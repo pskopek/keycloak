@@ -28,6 +28,8 @@ public interface SignatureProviderFactory extends ProviderFactory<SignatureProvi
     Set<String> EC_PRIVATE_JWK_CLAIMS = Set.of("d");
     Set<String> OKP_PRIVATE_JWK_CLAIMS = Set.of("d");
     Set<String> OCT_PRIVATE_JWK_CLAIMS = Set.of("k");
+    /** AKP (Asymmetric Key Pair) private JWK claim used for PQC algorithms such as ML-DSA. */
+    Set<String> AKP_PRIVATE_JWK_CLAIMS = Set.of("priv");
 
     @Override
     default void init(Config.Scope config) {

@@ -77,6 +77,12 @@ public class JavaAlgorithm {
                 return Ed25519;
             case Algorithm.AES:
                 return AES;
+            case Algorithm.ML_DSA_44:
+                return Algorithm.ML_DSA_44;
+            case Algorithm.ML_DSA_65:
+                return Algorithm.ML_DSA_65;
+            case Algorithm.ML_DSA_87:
+                return Algorithm.ML_DSA_87;
             default:
                 throw new IllegalArgumentException("Unknown algorithm " + algorithm);
         }
@@ -126,6 +132,12 @@ public class JavaAlgorithm {
                 return SHA512;
             case Algorithm.AES:
                 return AES;
+            case Algorithm.ML_DSA_44:
+            case Algorithm.ML_DSA_65:
+            case Algorithm.ML_DSA_87:
+                // ML-DSA (CRYSTALS-Dilithium) uses a deterministic signing process
+                // without a separate hash step; return the algorithm itself
+                return algorithm;
             default:
                 throw new IllegalArgumentException("Unknown algorithm " + algorithm);
         }
@@ -142,6 +154,10 @@ public class JavaAlgorithm {
             case Algorithm.Ed448:
             case Algorithm.Ed25519:
                 return KeyType.OKP;
+            case Algorithm.ML_DSA_44:
+            case Algorithm.ML_DSA_65:
+            case Algorithm.ML_DSA_87:
+                return KeyType.AKP;
             default:
                 return KeyType.OCT;
         }
